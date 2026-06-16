@@ -1,10 +1,10 @@
 ## Pajadex
 
-Frontend part of PajaDex.
+Frontend part of PajaDex. Works as a visual part of the PajaDex Backend part, which only works with data sends them via /api routes.
 
 #### TechStack
 
-React.js, tailwindcss
+React.js, tailwindcss, TanStack Query, Typescript
 
 ### Structure
 
