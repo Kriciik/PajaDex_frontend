@@ -11,8 +11,6 @@ export default function Login() {
 
   async function handleSubmit(e: React.SubmitEvent) {
     e.preventDefault();
-    console.log("Username:", username);
-    console.log("Password:", password);
 
     try {
       await axios.post(

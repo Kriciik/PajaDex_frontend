@@ -1,0 +1,14 @@
+import { Check, X } from "lucide-react";
+
+export default function AddToGroupModal() {
+  return (
+    <div className="fixed right-15 bottom-10 z-3 flex h-30 w-50 flex-row items-center justify-center gap-10 rounded-xl border bg-white/30 backdrop-blur-3xl backdrop-invert backdrop-opacity-95">
+      <button className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500 transition-all hover:scale-105 active:scale-95">
+        <Check color="white" />
+      </button>
+      <button className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500">
+        <X color="white" />
+      </button>
+    </div>
+  );
+}

@@ -4,9 +4,12 @@ export default function ModalItem({
   isAttack = false,
 }: {
   label: string;
-  value: string;
+  value: string | string[];
   isAttack?: boolean;
 }) {
+  if (Array.isArray(value)) {
+    value = value.join(", ");
+  }
   if (isAttack) {
     return (
       <div>

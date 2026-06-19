@@ -5,10 +5,16 @@ export interface CleanCard {
   setName: string;
   type: string[];
   category: string;
+  isOwned?: boolean;
 }
 
 export interface DetailedCard extends CleanCard {
-  abilities: Array<object>;
+  abilities: {
+    cost?: string[];
+    name: string;
+    effect?: string;
+    damage?: string | number;
+  }[];
   rarity: string;
   evolvesFrom: string;
   description: string;

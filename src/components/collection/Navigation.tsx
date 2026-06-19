@@ -1,3 +1,5 @@
 export default function Navigation() {
-  return <nav className="h-full min-w-50 bg-gray-300"></nav>;
+  return (
+    <nav className="sticky top-0 h-screen min-w-50 overflow-auto bg-blue-400"></nav>
+  );
 }

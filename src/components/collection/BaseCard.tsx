@@ -1,37 +1,34 @@
-import { useState } from "react";
+import { Star } from "lucide-react";
+import type { CleanCard } from "../../types/card.types";
+import { useToggleCardInCollection } from "../../utils/pokemonApi.utils";
 export default function BaseCard({
-  index,
-  url,
-  name,
-  OnImageClicked,
+  card,
+  onImageClicked,
+  canAddToGroup,
 }: {
-  index: string;
-  url: string;
-  name: string;
-
-  OnImageClicked: (e: React.MouseEvent) => void;
+  card: CleanCard;
+  onImageClicked: () => void;
+  canAddToGroup: boolean;
 }) {
-  const [isOwned, setIsOwned] = useState(false);
-
+  const { id, name, image, isOwned } = card;
+  const mutation = useToggleCardInCollection();
   function handleOwnedToggle() {
-    // TODO: logika pro přidávání/odebírání podle IDčka, ne jen přepínání stavu
-    setIsOwned((prev) => !prev);
+    mutation.mutate(card);
   }
   return (
-    <div className="relative aspect-2.5/3.5 w-full">
+    <div className="relative aspect-2.5/3.5 w-full transition-all hover:scale-[1.03]">
       <img
-        key={index}
-        id={index}
-        src={url}
-        alt={`Pokemon ${name} with id ${index}`}
+        key={id}
+        id={id}
+        src={image}
+        alt={`Pokemon ${name} with id ${id}`}
         className={`${isOwned ? "" : "opacity-70"} h-full w-full rounded object-contain`}
-        onClick={(e: React.MouseEvent) => {
-          OnImageClicked(e);
-        }}
+        onClick={onImageClicked}
       />
       <button
         className="absolute right-5 bottom-5 z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-pink-700 shadow-md transition-all active:scale-80"
         onClick={handleOwnedToggle}
+        disabled={mutation.isPending}
       >
         {isOwned ? (
           /* Ikona fajfky */
@@ -66,6 +63,16 @@ export default function BaseCard({
             />
           </svg>
         )}
+        <button
+          className="absolute right-12 bottom-3 h-3 w-3"
+          disabled={canAddToGroup}
+        >
+          {canAddToGroup ? (
+            <Star color="yellow" />
+          ) : (
+            <Star color="yellow" className="text-yellow-200" />
+          )}
+        </button>
       </button>
     </div>
   );
