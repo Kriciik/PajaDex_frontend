@@ -2,17 +2,30 @@ interface SearchAndFilterSectionProps {
   value: string;
   setSearch: (value: string) => void;
   setCurrentPage: (page: number) => void;
+  showOwnedOnly: boolean; // Nová prop
+  onShowOwnedChange: (checked: boolean) => void; // Nová prop
+  isEditing: boolean; // Nová prop
 }
 export default function SearchAndFilterSection({
   value,
   setSearch,
   setCurrentPage,
+  showOwnedOnly,
+  onShowOwnedChange,
+  isEditing,
 }: SearchAndFilterSectionProps) {
   return (
     <div className="flex w-full flex-row items-center justify-between">
       <div className="flex items-center justify-center gap-3">
         <label htmlFor="showOwnedInput">Show owned</label>
-        <input type="checkbox" name="" id="showOwnedInput" className="size-4" />
+        <input
+          type="checkbox"
+          id="showOwnedInput"
+          className="size-4"
+          checked={showOwnedOnly}
+          disabled={isEditing}
+          onChange={(e) => onShowOwnedChange(e.target.checked)}
+        />
       </div>
 
       <div className="flex gap-3">

@@ -10,6 +10,8 @@ async function getPokemonData(
   currentPage: number,
   limit: number,
   search: string,
+  groupId: string | null,
+  onlyOwned?: boolean,
 ): Promise<PokemonResponse> {
   const response = await axios.get(
     import.meta.env.VITE_BACKEND_URL + `/pokemon`,
@@ -18,6 +20,8 @@ async function getPokemonData(
         page: currentPage,
         limit: limit,
         name: search.trim(),
+        groupId: groupId,
+        onlyOwned: onlyOwned,
       },
       withCredentials: true,
     },
@@ -31,10 +35,13 @@ export function usePokemonData(
   currentPage: number = 1,
   limit = 12,
   search = "",
+  groupId: string | null = null,
+  onlyOwned?: boolean,
 ) {
   return useQuery<PokemonResponse>({
-    queryKey: ["pokemon", currentPage, search],
-    queryFn: () => getPokemonData(currentPage, limit, search),
+    queryKey: ["pokemon", currentPage, search, groupId, onlyOwned],
+    queryFn: async () =>
+      getPokemonData(currentPage, limit, search, groupId, onlyOwned),
     placeholderData: (previousData) => previousData,
   });
 }
@@ -79,6 +86,7 @@ export function useToggleCardInCollection() {
     mutationFn: toggleCardInCollection,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pokemon"] });
+      queryClient.invalidateQueries({ queryKey: ["groupCardIds"] });
     },
     onError: (error) => {
       console.error("Error toggling card in collection:", error);

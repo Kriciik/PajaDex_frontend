@@ -1,20 +1,28 @@
-import { Star } from "lucide-react";
+import { Check, Plus, Star } from "lucide-react";
 import type { CleanCard } from "../../types/card.types";
-import { useToggleCardInCollection } from "../../utils/pokemonApi.utils";
+import { useToggleCardInCollection } from "../../api/pokemon.api";
+
+interface BaseCardProps {
+  card: CleanCard;
+  onImageClicked: () => void;
+  isEditMode: boolean;
+  isGroupMember: boolean;
+  onToggleGroup: () => void;
+}
 export default function BaseCard({
   card,
   onImageClicked,
-  canAddToGroup,
-}: {
-  card: CleanCard;
-  onImageClicked: () => void;
-  canAddToGroup: boolean;
-}) {
+  isEditMode,
+  isGroupMember,
+  onToggleGroup,
+}: BaseCardProps) {
   const { id, name, image, isOwned } = card;
   const mutation = useToggleCardInCollection();
+
   function handleOwnedToggle() {
     mutation.mutate(card);
   }
+
   return (
     <div className="relative aspect-2.5/3.5 w-full transition-all hover:scale-[1.03]">
       <img
@@ -32,48 +40,24 @@ export default function BaseCard({
       >
         {isOwned ? (
           /* Ikona fajfky */
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={3}
-            stroke="currentColor"
-            className="h-4 w-4"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m4.5 12.75 6 6 9-13.5"
-            />
-          </svg>
+          <Check />
         ) : (
           /* Ikona plus / prázdné */
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2.5}
-            stroke="currentColor"
-            className="h-4 w-4"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
+          <Plus />
         )}
-        <button
-          className="absolute right-12 bottom-3 h-3 w-3"
-          disabled={canAddToGroup}
-        >
-          {canAddToGroup ? (
-            <Star color="yellow" />
-          ) : (
-            <Star color="yellow" className="text-yellow-200" />
-          )}
-        </button>
       </button>
+      {isEditMode && (
+        <button
+          className="absolute right-18 bottom-9 h-3 w-3"
+          onClick={onToggleGroup}
+        >
+          <Star
+            color="black"
+            size={25}
+            fill={isGroupMember ? "black" : "none"}
+          />
+        </button>
+      )}
     </div>
   );
 }

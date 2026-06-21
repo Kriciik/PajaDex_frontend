@@ -4,25 +4,20 @@ import GroupSection from "../components/collection/GroupSection";
 import Navigation from "../components/collection/Navigation";
 import PaginationSection from "../components/collection/PaginationSection";
 import SearchAndFilterSection from "../components/collection/SearchAndFilterSection";
-import {
-  useDetailedPokemonData,
-  usePokemonData,
-} from "../utils/pokemonApi.utils";
+import { useDetailedPokemonData, usePokemonData } from "../api/pokemon.api";
 import DetailedPokeModal from "../components/collection/modal/DetailedPokeModal";
 import AddToGroupModal from "../components/collection/AddToGroupModal";
+import {
+  useCreateGroup,
+  useGroupCardIds,
+  useGroupsData,
+  useUpdateGroupCards,
+} from "../api/groups.api";
 
 // TODO: bude dynamicky, zatím hardcoded
 const LIMIT = 20;
 
-// TODO: skupiny budou v databázi, takže je bude možné dynamicky načítat a měnit. Prozatím jsou hardcoded
-const groups: Array<object> = [
-  { name: "cute", color: "bg-pink-400" },
-  { name: "cool", color: "bg-fuchsia-300" },
-  { name: "hajzli", color: "bg-blue-400" },
-  { name: "legendary", color: "bg-blue-200" },
-  { name: "strong", color: "bg-white" },
-  { name: "weak", color: "bg-pink-100" },
-];
+// TODO: mazání skupin
 
 function useDebounce(value: string, delay: number) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -39,17 +34,46 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [canAddToGroup, setCanAddToGroup] = useState(true);
+  const [activeFilterGroupId, setActiveFilterGroupId] = useState<string | null>(
+    null,
+  );
+  const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
+  const [selectedCardIds, setSelectedCardIds] = useState<string[]>([]);
+  const [showOwnedOnly, setShowOwnedOnly] = useState(false);
+
   const debouncedSearch = useDebounce(search, 500);
+  const isEditing = editingGroupId !== null;
+  const currentGroupId =
+    isEditing || showOwnedOnly ? null : activeFilterGroupId;
+  const isOnlyOwned = isEditing || showOwnedOnly;
+
   const {
     data: response,
     isLoading,
     isError,
     error,
-  } = usePokemonData(currentPage, LIMIT, debouncedSearch);
+  } = usePokemonData(
+    currentPage,
+    LIMIT,
+    debouncedSearch,
+    currentGroupId,
+    isOnlyOwned,
+  );
 
   const { data: detailedResponse, isLoading: isDetailedLoading } =
     useDetailedPokemonData(selectedId);
+  const { data: groups = [] } = useGroupsData();
+  const { data: fetchedCardIds } = useGroupCardIds(editingGroupId);
+
+  const updateGroupCardsMutation = useUpdateGroupCards();
+
+  useEffect(() => {
+    if (fetchedCardIds) {
+      setSelectedCardIds(fetchedCardIds);
+    }
+  }, [fetchedCardIds]);
+
+  const createGroupMutation = useCreateGroup();
 
   const pokemonArr = response?.data || [];
   const detailedPokemonData = detailedResponse;
@@ -86,6 +110,53 @@ export default function App() {
     setCurrentPage(nextPage);
   }
 
+  async function handleAddGroup(name: string) {
+    createGroupMutation.mutate({ name });
+  }
+  function handleFilterSelect(groupId: string) {
+    setActiveFilterGroupId((prevGroupId) =>
+      prevGroupId === groupId ? null : groupId,
+    );
+  }
+  async function handleStartEdit(groupId: string) {
+    setEditingGroupId(groupId);
+    setActiveFilterGroupId(null);
+    setCurrentPage(1);
+  }
+  function handleToggleCardInGroup(cardId: string) {
+    setSelectedCardIds((prev) =>
+      prev.includes(cardId)
+        ? prev.filter((id) => id !== cardId)
+        : [...prev, cardId],
+    );
+  }
+
+  function handleSaveGroupCards() {
+    if (!editingGroupId) return;
+
+    updateGroupCardsMutation.mutate(
+      { groupId: editingGroupId, cardIds: selectedCardIds },
+      {
+        onSuccess: () => {
+          setEditingGroupId(null);
+          setSelectedCardIds([]);
+        },
+      },
+    );
+  }
+
+  function handleCancelGroupCards() {
+    setEditingGroupId(null);
+    setSelectedCardIds([]);
+  }
+
+  function handleShowOwnedChange(checked: boolean) {
+    setShowOwnedOnly(checked);
+    setCurrentPage(1);
+    if (checked) {
+      setActiveFilterGroupId(null);
+    }
+  }
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {error.message}</div>;
   return (
@@ -93,12 +164,22 @@ export default function App() {
       <div className="w-ful flex min-h-screen font-medium">
         <Navigation />
         <main className="z-3 flex w-full flex-col gap-5 bg-pink-300 p-15 shadow-2xl">
-          <GroupSection groups={groups} />
+          <GroupSection
+            groups={groups}
+            onAddGroup={handleAddGroup}
+            activeFilterGroupId={activeFilterGroupId}
+            onFilterSelect={handleFilterSelect}
+            editingGroupId={editingGroupId}
+            onStartEdit={handleStartEdit}
+          />
           <div className="flex w-full flex-col gap-3 text-white">
             <SearchAndFilterSection
               value={search}
               setSearch={setSearch}
               setCurrentPage={setCurrentPage}
+              showOwnedOnly={showOwnedOnly}
+              onShowOwnedChange={handleShowOwnedChange}
+              isEditing={isEditing}
             />
             <PaginationSection
               onPageChange={handlePageChange}
@@ -108,14 +189,16 @@ export default function App() {
               totalPages={totalPages}
             />
             <div className="grid w-full grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
-              {pokemonArr.map((pokemon, index) => {
+              {pokemonArr.map((pokemon) => {
                 if (!pokemon) return null;
                 return (
                   <BaseCard
                     card={pokemon}
-                    key={index}
+                    key={pokemon.id}
                     onImageClicked={() => setSelectedId(pokemon.id)}
-                    canAddToGroup={canAddToGroup}
+                    isEditMode={editingGroupId !== null}
+                    isGroupMember={selectedCardIds.includes(pokemon.id)}
+                    onToggleGroup={() => handleToggleCardInGroup(pokemon.id)}
                   />
                 );
               })}
@@ -132,7 +215,13 @@ export default function App() {
           onNext={handleNext}
         />
       )}
-      {canAddToGroup && <AddToGroupModal />}
+      {editingGroupId && (
+        <AddToGroupModal
+          onSave={handleSaveGroupCards}
+          onCancel={handleCancelGroupCards}
+          isPending={updateGroupCardsMutation.isPending}
+        />
+      )}
     </>
   );
 }
