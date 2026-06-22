@@ -89,3 +89,25 @@ export function useGroupCardIds(groupId: string | null) {
     enabled: !!groupId,
   });
 }
+
+async function deleteGroup(groupId: string): Promise<void> {
+  const response = await axios.delete(
+    import.meta.env.VITE_BACKEND_URL + `/group/${groupId}`,
+    { withCredentials: true },
+  );
+  if (response.status !== 200) throw new Error("Failed to delete group");
+  return response.data;
+}
+
+export function useDeleteGroup() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteGroup,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["groups"] });
+    },
+    onError: (error) => {
+      console.error("Error deleting group:", error);
+    },
+  });
+}

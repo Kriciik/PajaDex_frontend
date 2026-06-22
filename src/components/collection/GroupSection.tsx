@@ -57,10 +57,11 @@ export default function GroupSection({
             <Plus color="white" />
           </button>
         ) : (
-          <div className="flex h-auto content-center items-center justify-center gap-1 rounded-full bg-white p-2 text-sm shadow-md transition-all">
+          <div className="flex h-auto content-center items-center justify-center gap-1 rounded-full bg-white p-1 text-sm shadow-md transition-all">
             <input
+              autoFocus
               type="text"
-              className="rounded-2xl text-[1.2rem]"
+              className="rounded-2xl p-2 text-[1.2rem] focus:outline-none"
               value={inputValue}
               onChange={(e) => {
                 setInputValue(e.target.value);
@@ -68,12 +69,12 @@ export default function GroupSection({
             />
             <Check
               color="green "
-              className="hover:scale-105"
+              className="cursor-pointer hover:scale-105"
               onClick={handleConfirm}
             />
             <X
               color="red "
-              className="hover:scale-105"
+              className="cursor-pointer hover:scale-105"
               onClick={handleCancel}
             />
           </div>

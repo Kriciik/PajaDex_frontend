@@ -29,7 +29,7 @@ export default function DetailedPokeModal({
       className="fixed top-0 z-50 flex h-full w-full flex-row items-center justify-between bg-[rgba(0,0,0,0.5)] text-pink-600"
       onClick={handleBackdropClick}
     >
-      <ModalArrow text="ArrowLeft" onClick={onPrev} disabled={!onPrev} />
+      <ModalArrow side="left" onClick={onPrev} disabled={!onPrev} />
       {/* overflow-y možná oddělat*/}
       <div className="h-max-[70vh] flex h-auto min-h-120 w-full max-w-200 flex-col items-center gap-3 overflow-y-auto rounded bg-fuchsia-200 px-5 pt-5 pb-10">
         <div className="flex flex-row items-baseline gap-3">
@@ -73,7 +73,7 @@ export default function DetailedPokeModal({
           </div>
         </div>
       </div>
-      <ModalArrow text="ArrowRight" onClick={onNext} disabled={!onNext} />
+      <ModalArrow side="right" onClick={onNext} disabled={!onNext} />
     </div>
   );
 }

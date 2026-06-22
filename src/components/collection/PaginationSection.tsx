@@ -1,3 +1,5 @@
+import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
+
 export default function PaginationSection({
   onPageChange,
   startIndex,
@@ -12,14 +14,17 @@ export default function PaginationSection({
   totalPages: number;
 }) {
   return (
-    <div className="flex flex-row items-center gap-2">
+    <div className="flex w-70 flex-row items-center justify-between gap-2">
       <button
-        className={`rounded border-2 border-black px-4 py-1 font-bold ${startIndex === 1 ? "invisible" : ""}`}
+        className={`cursor-pointer border-black px-4 py-1 font-bold ${startIndex === 1 ? "invisible" : ""}`}
         onClick={() => {
           onPageChange(-1);
         }}
       >
-        &lt;
+        <ArrowBigLeft
+          color="oklch(65.6% 0.241 354.308)"
+          fill="oklch(65.6% 0.241 354.308)"
+        />
       </button>
 
       <span>
@@ -28,12 +33,15 @@ export default function PaginationSection({
       <span>...</span>
       <span>{totalItems}</span>
       <button
-        className={`rounded border-2 border-black px-4 py-1 font-bold ${endIndex === totalItems ? "hidden" : ""}`}
+        className={`cursor-pointer rounded px-4 py-1 font-bold ${endIndex === totalItems ? "hidden" : ""}`}
         onClick={() => {
           onPageChange(1);
         }}
       >
-        &gt;
+        <ArrowBigRight
+          color="oklch(65.6% 0.241 354.308)"
+          fill="oklch(65.6% 0.241 354.308)"
+        />
       </button>
     </div>
   );

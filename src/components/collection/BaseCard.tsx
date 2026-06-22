@@ -24,7 +24,7 @@ export default function BaseCard({
   }
 
   return (
-    <div className="relative aspect-2.5/3.5 w-full transition-all hover:scale-[1.03]">
+    <div className="relative aspect-2.5/3.5 w-full cursor-pointer transition-all hover:scale-[1.03]">
       <img
         key={id}
         id={id}

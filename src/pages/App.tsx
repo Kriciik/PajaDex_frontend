@@ -9,13 +9,14 @@ import DetailedPokeModal from "../components/collection/modal/DetailedPokeModal"
 import AddToGroupModal from "../components/collection/AddToGroupModal";
 import {
   useCreateGroup,
+  useDeleteGroup,
   useGroupCardIds,
   useGroupsData,
   useUpdateGroupCards,
 } from "../api/groups.api";
 
 // TODO: bude dynamicky, zatím hardcoded
-const LIMIT = 20;
+const LIMIT = 15;
 
 // TODO: mazání skupin
 
@@ -41,7 +42,7 @@ export default function App() {
   const [selectedCardIds, setSelectedCardIds] = useState<string[]>([]);
   const [showOwnedOnly, setShowOwnedOnly] = useState(false);
 
-  const debouncedSearch = useDebounce(search, 500);
+  const debouncedSearch = useDebounce(search, 250);
   const isEditing = editingGroupId !== null;
   const currentGroupId =
     isEditing || showOwnedOnly ? null : activeFilterGroupId;
@@ -64,7 +65,7 @@ export default function App() {
     useDetailedPokemonData(selectedId);
   const { data: groups = [] } = useGroupsData();
   const { data: fetchedCardIds } = useGroupCardIds(editingGroupId);
-
+  const deleteGroupMutation = useDeleteGroup();
   const updateGroupCardsMutation = useUpdateGroupCards();
 
   useEffect(() => {
@@ -157,6 +158,16 @@ export default function App() {
       setActiveFilterGroupId(null);
     }
   }
+
+  function handleDeleteGroup() {
+    if (!editingGroupId) return;
+    deleteGroupMutation.mutate(editingGroupId, {
+      onSuccess: () => {
+        setEditingGroupId(null);
+        setSelectedCardIds([]);
+      },
+    });
+  }
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {error.message}</div>;
   return (
@@ -219,6 +230,7 @@ export default function App() {
         <AddToGroupModal
           onSave={handleSaveGroupCards}
           onCancel={handleCancelGroupCards}
+          onDelete={handleDeleteGroup}
           isPending={updateGroupCardsMutation.isPending}
         />
       )}

@@ -22,13 +22,14 @@ export default function FilterGroupButton({
         onClick={() => {
           onFilterSelect(group.id);
         }}
-        className={`max-h-15 max-w-50 rounded-md px-9 py-3 transition-all hover:scale-[1.04] active:scale-95`}
+        className={`max-h-15 max-w-50 cursor-pointer rounded-md px-9 py-3 transition-all hover:scale-[1.04] active:scale-95`}
         style={{ backgroundColor: backgroundColor }}
       >
         {group.name}
       </button>
       {isActiveFilter && !isEditing && (
         <button
+          className="ml-3"
           onClick={() => {
             onStartEdit(group.id);
           }}
