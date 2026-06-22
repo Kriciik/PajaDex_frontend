@@ -5,7 +5,6 @@ export default function PaginationSection({
   startIndex,
   endIndex,
   totalItems,
-  totalPages,
 }: {
   onPageChange: (step: number) => void;
   startIndex: number;

@@ -37,7 +37,7 @@ export default function GroupSection({
     <div className="flex min-h-30 w-full flex-col rounded bg-pink-200 pb-4 shadow-md">
       <h1 className="self-center text-3xl">Groups</h1>
       <div className="flex h-full w-full flex-wrap items-center gap-5 pl-10">
-        {groups.map((group, index) => {
+        {groups.map((group) => {
           return (
             <FilterGroupButton
               group={group}

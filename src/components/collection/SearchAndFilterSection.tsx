@@ -7,7 +7,6 @@ interface SearchAndFilterSectionProps {
   isEditing: boolean; // Nová prop
 }
 export default function SearchAndFilterSection({
-  value,
   setSearch,
   setCurrentPage,
   showOwnedOnly,
