@@ -1,22 +1,18 @@
-## Pajadex
+## Pokemon Frontend
+The PajaDex frontend serves as the user interface, consuming data from the PajaDex backend API.
 
-Frontend part of PajaDex. Works as a visual part of the PajaDex Backend part, which only works with data sends them via /api routes.
+**Hosting:** https://pajadex.kriciik.eu/
+**Guest Account:** Username: `guest` | Password: `123654`
 
-hosted on: https://pajadex.kriciik.eu/ <br/>
-guest account: username:guest, password: 123654
+## Tech Stack
+* React
+* Tailwind CSS
+* TanStack Query
+* TypeScript
 
-#### TechStack
+## Structure
+All application source code is located inside the `/src` directory.
 
-React.js, tailwindcss, TanStack Query, Typescript
-
-### Structure
-
-everything is placed inside <code> /src </code> folder
-
-#### TODO: folder name
-
-some description
-
-#### TODO: folder name2
-
-some description
+### Directories
+* `[TODO: folder_name]` - [TODO: some description]
+* `[TODO: folder_name_2]` - [TODO: some description]
